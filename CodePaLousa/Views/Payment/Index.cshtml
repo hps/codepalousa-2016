@@ -1,0 +1,125 @@
+﻿@model CodePaLousa.ViewModels.PaymentDetails
+@{
+    ViewBag.Title = "Make a Payment";
+}
+
+<h1>Make a Payment</h1>
+
+<div class="container">
+    @using (Html.BeginForm("Process", "Payment", FormMethod.Post, new { id = "payment_form", @class = "form-horizontal col-sm-6" }))
+    {
+        <p>
+            The form below uses Heartland's patent-pending SecureSubmit libary to offer an iframe-hybrid tokenization solution.
+        </p>
+        <p class="lead well">
+            The card information fields and the submit button are dynamically injected iframes pointing to fields hosted on
+            Heartland's payment gateway, keeping you eligible for the PCI SAQ-A compliance form.
+        </p>
+        <h4>Payment Information</h4>
+        <div class="form-group">
+            @Html.LabelFor(m => m.Amount, new { @class = "col-sm-4 control-label" })
+            <div class="col-sm-8">
+                @Html.TextBoxFor(m => m.Amount)
+            </div>
+        </div>
+
+        <h4>Card Information</h4>
+        <div class="form-group">
+            <label for="iframesCardNumber" class="col-sm-4 control-label">Card Number</label>
+            <div id="iframesCardNumber" class="col-sm-8"></div>
+        </div>
+        <div class="form-group">
+            <label for="iframesCardExpiration" class="col-sm-4 control-label">Expiration Date</label>
+            <div id="iframesCardExpiration" class="col-sm-8"></div>
+        </div>
+        <div class="form-group">
+            <label for="iframesCardCvv" class="col-sm-4 control-label">Security Code</label>
+            <div id="iframesCardCvv" class="col-sm-8"></div>
+        </div>
+
+        <h4>Billing Information</h4>
+        <div class="form-group">
+            @Html.LabelFor(m => m.BillingZip, new { @class = "col-sm-4 control-label" })
+            <div class="col-sm-8">
+                @Html.TextBoxFor(m => m.BillingZip)
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div id="iframesSubmit" class="col-sm-4"></div>
+        </div>
+        @Html.HiddenFor(m => m.PaymentToken)
+    }
+
+    <div class="col-sm-6">
+        <script async src="http://jsfiddle.net/Heartland/L00kgsvr/embed/js,html,result/"></script>
+    </div>
+</div>
+
+<script type="text/javascript" src="https://api2.heartlandportico.com/Securesubmit.v1/token/2.1/securesubmit.js"></script>
+<script type="text/javascript">
+    (function (document, Heartland) {
+        // Create a new `HPS` object with the necessary configuration
+        var hps = new Heartland.HPS({
+            publicKey: 'pkapi_cert_jKc1FtuyAydZhZfbB3',
+            type: 'iframe',
+            // Configure the iframe fields to tell the library where
+            // the iframe should be inserted into the DOM and some
+            // basic options
+            fields: {
+                cardNumber: {
+                    target: 'iframesCardNumber',
+                    placeholder: '•••• •••• •••• ••••'
+                },
+                cardExpiration: {
+                    target: 'iframesCardExpiration',
+                    placeholder: 'MM / YYYY'
+                },
+                cardCvv: {
+                    target: 'iframesCardCvv',
+                    placeholder: 'CVV'
+                },
+                submit: {
+                    target: 'iframesSubmit'
+                }
+            },
+            // Collection of CSS to inject into the iframes.
+            // These properties can match the site's styles
+            // to create a seamless experience.
+            style: {
+                '*': {
+                    'box-sizing': 'border-box'
+                },
+                'input': {
+                    'max-width': '280px',
+                    'font-family': '"Helvetica Neue", Helvetica, Arial, sans-serif',
+                    'font-size': '14px',
+                    'line-height': '20px',
+                    'height': '26px',
+                    'margin': '0',
+                    'color': 'inherit'
+                },
+                'input[type="button"]': {
+                    '-webkit-appearance': 'button',
+                    'cursor': 'pointer'
+                }
+            },
+            // Callback when a token is received from the service
+            onTokenSuccess: function (resp) {
+                //alert('Here is a single-use token: ' + resp.token_value);
+                var form = document.getElementById('payment_form');
+                var token = document.getElementById('@Html.IdFor(m => m.PaymentToken)');
+                token.value = resp.token_value;
+                form.submit();
+            },
+            // Callback when an error is received from the service
+            onTokenError: function (resp) {
+                alert('There was an error: ' + resp.error.message);
+            },
+            // Callback when an event is fired within an iFrame
+            onEvent: function (ev) {
+                console.log(ev);
+            }
+        });
+    }(document, Heartland));
+</script>

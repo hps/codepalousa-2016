@@ -1,0 +1,12 @@
+﻿@model SecureSubmit.Entities.HpsAuthorization
+@{
+    ViewBag.Title = "Process Results";
+}
+
+<h2>Process Results</h2>
+
+<ul>
+    <li>Transaction ID: @Model.TransactionId</li>
+    <li>Authorization Code: @Model.AuthorizationCode</li>
+    <li>Response: @Model.ResponseText (@Model.ResponseCode)</li>
+</ul>
