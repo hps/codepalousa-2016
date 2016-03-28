@@ -10,7 +10,8 @@ namespace CodePaLousa.Controllers
     {
         public ActionResult Index()
         {
-            return View();
+            //return View();
+            return RedirectToAction("Index", "Payment");
         }
 
         public ActionResult About()
