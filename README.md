@@ -1,5 +1,7 @@
 # Code PaLOUsa 2016
 
+# ** This repository is no longer maintained **
+
 This is an end-to-end example project used to demo the patent-pending SecureSubmit tokenization library offered by Heartland
 at the 2016 Code PaLOUsa conference.
 
